@@ -1,0 +1,28 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.kurtmotoshop.v1'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.kurtmotoshop.v1'
+        minSdk 24
+        targetSdk 35
+        versionCode 7
+        versionName '1.5'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+}
