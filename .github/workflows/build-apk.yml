@@ -1,0 +1,74 @@
+name: Build KURTSHOP INVENTORY V1.5 APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Verify complete Android project
+        run: |
+          test -f settings.gradle
+          test -f build.gradle
+          test -f app/build.gradle
+          test -f app/src/main/AndroidManifest.xml
+          test -f app/src/main/java/com/kurtmotoshop/v1/MainActivity.java
+          test -f app/src/main/java/com/kurtmotoshop/v1/CloudBackend.java
+          test -f app/src/main/java/com/kurtmotoshop/v1/BackendConfig.java
+          echo "=== PROJECT MODULES ==="
+          find . -maxdepth 3 -type f | sort
+          echo "=== GRADLE PROJECTS ==="
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          cmdline-tools-version: 12266719
+          packages: ''
+
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager "platform-tools"
+          sdkmanager "platforms;android-35"
+          sdkmanager "build-tools;35.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Clean invalid Android resource files
+        run: |
+          find app/src/main/res/values -type f ! -name '*.xml' -print -delete || true
+          find app/src/main/res/drawable -type f \
+            ! -name '*.xml' ! -name '*.png' ! -name '*.jpg' ! -name '*.jpeg' ! -name '*.webp' \
+            -print -delete || true
+
+      - name: Show Gradle projects
+        run: gradle projects
+
+      - name: Build debug APK
+        run: |
+          gradle clean
+          gradle :app:assembleDebug --stacktrace
+
+      - name: Check APK
+        run: |
+          ls -lh app/build/outputs/apk/debug/
+          test -f app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: KURTSHOP-INVENTORY-V1.5-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
