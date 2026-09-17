@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "848954848996",
+    "project_id": "kurtshop-inventory",
+    "storage_bucket": "kurtshop-inventory.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:848954848996:android:782177e8f584b70dbe1ef1",
+        "android_client_info": {
+          "package_name": "com.kurtmotoshop.v1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwwih0qe06ZE8JGRrQx9JN7bFl3MTg6-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
