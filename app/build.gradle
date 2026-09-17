@@ -11,15 +11,8 @@ android {
         applicationId 'com.kurtmotoshop.v1'
         minSdk 24
         targetSdk 35
-        versionCode 7
-        versionName '1.5'
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
+        versionCode 8
+        versionName '1.5.1'
     }
 }
 
@@ -27,7 +20,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
 
-    // Firebase
     implementation platform('com.google.firebase:firebase-bom:34.19.0')
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
