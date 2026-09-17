@@ -420,6 +420,19 @@ public class CloudBackend {
                 JSONArray stockHistory =
                         readCollectionSync("stockHistory");
 
+                // Load the authenticated user's Firestore profile.
+                // MainActivity expects this as the compatibility "accounts" array.
+                JSONArray accounts = new JSONArray();
+                JSONObject account = readCurrentUserSync();
+                if (account != null) {
+                    accounts.put(account);
+                }
+
+                state.put(
+                        "accounts",
+                        accounts
+                );
+
                 state.put(
                         "products",
                         products
@@ -453,6 +466,74 @@ public class CloudBackend {
                 );
             }
         }).start();
+    }
+
+    private JSONObject readCurrentUserSync() throws Exception {
+        if (localUid == null || localUid.trim().isEmpty()) {
+            return null;
+        }
+
+        String url =
+                "https://firestore.googleapis.com/v1/projects/"
+                        + projectId
+                        + "/databases/(default)/documents/users/"
+                        + localUid;
+
+        try {
+            JSONObject document =
+                    requestJson(url, "GET", null, idToken);
+
+            JSONObject fields =
+                    document.optJSONObject("fields");
+
+            JSONObject user = decodeFields(fields);
+
+            String recordShop =
+                    user.optString("shopId", "").trim();
+
+            // Never expose a profile from another shop to MainActivity.
+            if (!recordShop.equals(shopId)) {
+                return null;
+            }
+
+            String username =
+                    user.optString("username", "").trim();
+
+            // Existing user documents may not have username yet.
+            // Derive it from email, e.g. kurt@kurtshop.com -> kurt.
+            if (username.isEmpty()) {
+                String email =
+                        user.optString("email", "").trim().toLowerCase(Locale.US);
+                int at = email.indexOf('@');
+                if (at > 0) {
+                    username = email.substring(0, at);
+                }
+            }
+
+            if (username.isEmpty()) {
+                return null;
+            }
+
+            user.put("username", username);
+            user.put("name", user.optString("name", username));
+            user.put("role", user.optString("role", ""));
+            user.put("shopId", recordShop);
+            user.put("active", user.optBoolean("active", true));
+            user.put("uid", localUid);
+
+            if (user.optString("role", "").trim().isEmpty()) {
+                return null;
+            }
+
+            return user;
+        } catch (Exception e) {
+            // A missing user document should behave like an unassigned account.
+            String message = e.getMessage();
+            if (message != null && message.contains("HTTP 404")) {
+                return null;
+            }
+            throw e;
+        }
     }
 
     private JSONArray readCollectionSync(
