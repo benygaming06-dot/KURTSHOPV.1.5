@@ -144,14 +144,9 @@ public class CloudBackend {
     }
 
     public static String toEmail(String username) {
-
-        String safe = username == null
-                ? ""
-                : username.trim().toLowerCase(Locale.US);
-
-        return safe + "@kurtdhylan.app";
-    }
-
+    String safe = username == null ? "" : username.trim().toLowerCase(Locale.US);
+    return safe + "@kurtshop.com";
+}
     // =========================================================
     // USERS
     // =========================================================
